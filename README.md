@@ -6,6 +6,7 @@ A professional website for the ConStory-Bench benchmark - evaluating Large Langu
 
 - Website: https://picrew.github.io/constory-bench.github.io/
 - Benchmark repository: https://github.com/Picrew/ConStory-Bench
+- Dataset (Hugging Face): https://huggingface.co/datasets/jayden8888/ConStory-Bench
 
 ## 🌟 Features
 
