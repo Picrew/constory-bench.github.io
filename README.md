@@ -71,8 +71,9 @@ git push origin main
 
 1. Open your repo on GitHub
 2. Go to **Settings** → **Pages**
-3. Ensure **Build and deployment** source is **GitHub Actions**
-4. Wait for the Actions workflow `Deploy GitHub Pages` to finish
+3. Ensure **Build and deployment** source is **Deploy from a branch**
+4. Select branch **gh-pages** and folder **/ (root)**
+5. Wait for the workflow `Deploy to gh-pages` to finish
 
 ### Step 3: Open the correct URL
 
