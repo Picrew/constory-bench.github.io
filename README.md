@@ -2,6 +2,11 @@
 
 A professional website for the ConStory-Bench benchmark - evaluating Large Language Models on long story consistency and contradiction detection.
 
+## 🔗 Live Website
+
+- Website: https://picrew.github.io/constory-bench.github.io/
+- Benchmark repository: https://github.com/Picrew/ConStory-Bench
+
 ## 🌟 Features
 
 - **Modern Design**: Clean, elegant interface inspired by leading benchmark websites
