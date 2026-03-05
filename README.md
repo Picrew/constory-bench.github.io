@@ -57,51 +57,30 @@ Simply double-click `index.html` to open it in your browser. Note: Some features
 
 ## 📦 GitHub Pages Deployment
 
-### Step 1: Create a GitHub Repository
+This repository includes `.github/workflows/pages.yml`, so every push to `main` auto-deploys to GitHub Pages.
 
-1. Go to GitHub and create a new repository
-2. Name it: `constory-bench` (or your preferred name)
-3. Make it public (required for GitHub Pages)
-4. Don't initialize with README, .gitignore, or license
+### Step 1: Push to `main`
 
-### Step 2: Initialize Git and Push
-
-Open PowerShell in the `constory-bench` directory and run:
-
-```powershell
-# Initialize git repository
-git init
-
-# Add all files
+```bash
 git add .
-
-# Commit files
-git commit -m "Initial commit: ConStory-Bench website"
-
-# Add remote repository (replace YOUR-USERNAME with your GitHub username)
-git remote add origin https://github.com/YOUR-USERNAME/constory-bench.git
-
-# Push to GitHub
-git branch -M main
-git push -u origin main
+git commit -m "Update website"
+git push origin main
 ```
 
-### Step 3: Enable GitHub Pages
+### Step 2: Confirm Pages settings once
 
-1. Go to your repository on GitHub
-2. Click on **Settings** → **Pages** (in the left sidebar)
-3. Under "Source", select:
-   - Branch: `main`
-   - Folder: `/ (root)`
-4. Click **Save**
-5. Wait 1-2 minutes for deployment
+1. Open your repo on GitHub
+2. Go to **Settings** → **Pages**
+3. Ensure **Build and deployment** source is **GitHub Actions**
+4. Wait for the Actions workflow `Deploy GitHub Pages` to finish
 
-### Step 4: Access Your Website
+### Step 3: Open the correct URL
 
-Your website will be available at:
-```
-https://YOUR-USERNAME.github.io/constory-bench/
-```
+- If repo is `YOUR-USERNAME/REPO-NAME`: `https://YOUR-USERNAME.github.io/REPO-NAME/`
+- For this repo (`Picrew/constory-bench.github.io`): `https://picrew.github.io/constory-bench.github.io/`
+
+Important:
+- `https://constory-bench.github.io/` only works if the account/organization itself is named `constory-bench` (or if you bind a custom domain correctly).
 
 ## 🎨 Customization
 
