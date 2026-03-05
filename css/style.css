@@ -1476,6 +1476,11 @@ body.dark-mode .theme-toggle .moon-icon {
 }
 
 .hf-emoji {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
     font-size: 1.2rem;
     line-height: 1;
 }
