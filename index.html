@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ConStory-Bench - A comprehensive benchmark for evaluating Large Language Models on long story consistency and contradiction detection">
+    <meta name="keywords" content="LLM, benchmark, story consistency, long context, AI evaluation">
+    <meta name="author" content="ConStory-Bench Team">
+    <title>ConStory-Bench | LLM Story Consistency Benchmark</title>
+    <link rel="icon" type="image/png" href="assets/images/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css?v=4.7">
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="nav-logo" onclick="showPage('overview')">
+                    <img src="assets/images/logo.png" alt="ConStory-Bench Logo" class="logo-img">
+                    <span class="logo-text">ConStory-Bench</span>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="#" class="nav-link active" data-page="overview">Overview</a></li>
+                    <li><a href="#" class="nav-link" data-page="leaderboard">Leaderboard</a></li>
+                    <li><a href="#" class="nav-link" data-page="submit">Submit</a></li>
+                    <li><a href="#" class="nav-link" data-page="paper">Paper</a></li>
+                    <li><a href="https://github.com/Picrew/ConStory-Bench" target="_blank" class="nav-link github-link">
+                        <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+                        </svg>
+                        GitHub
+                    </a></li>
+                    <li>
+                        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+                            <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="5"/>
+                                <line x1="12" y1="1" x2="12" y2="3"/>
+                                <line x1="12" y1="21" x2="12" y2="23"/>
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                                <line x1="1" y1="12" x2="3" y2="12"/>
+                                <line x1="21" y1="12" x2="23" y2="12"/>
+                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                            </svg>
+                            <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                            </svg>
+                        </button>
+                    </li>
+                </ul>
+                <div class="mobile-menu-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Overview Page -->
+    <div id="page-overview" class="page-content active">
+        <!-- Hero Section -->
+        <section class="hero-section">
+                <div class="hero-content">
+                    <h1 class="hero-title">Lost in Stories: Consistency Bugs in Long Story Generation by LLMs</h1>
+                    <div class="hero-meta">
+                        <p class="hero-authors">
+                            Junjie Li<sup>1</sup> &nbsp; Xinrui Guo<sup>1</sup> &nbsp; Yuhao Wu<sup>2</sup> &nbsp; Roy Ka-Wei Lee<sup>2</sup> &nbsp; Hongzhi Li<sup>1</sup> &nbsp; Yutao Xie<sup>1</sup>
+                        </p>
+                        <p class="hero-affiliations"><sup>1</sup> Microsoft, Beijing, China</p>
+                        <p class="hero-affiliations"><sup>2</sup> Singapore University of Technology and Design</p>
+                        <p class="hero-correspondence">Contact: lij850601@gmail.com &nbsp;|&nbsp; xingu@microsoft.com &nbsp;|&nbsp; wu_yuhao@mymail.sutd.edu.sg</p>
+                    </div>
+
+                    <!-- Resource Links -->
+                    <div class="hero-links">
+                        <a href="#" class="hero-btn paper-btn hero-btn-disabled" aria-disabled="true" title="Coming Soon">
+                            <svg class="hero-btn-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M6 2h9l5 5v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm8 1.5V8h4.5L14 3.5zM8 12h8v1.5H8V12zm0 3h8v1.5H8V15zm0 3h6v1.5H8V18z"/>
+                            </svg>
+                            Paper
+                        </a>
+                        <a href="https://github.com/Picrew/ConStory-Bench" class="hero-btn code-btn" target="_blank">
+                            <svg class="hero-btn-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                            </svg>
+                            GitHub
+                        </a>
+                        <a href="#" class="hero-btn dataset-btn hero-btn-disabled" aria-disabled="true" title="Coming Soon">
+                            <svg class="hero-btn-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2 3 6.5 12 11l9-4.5L12 2zm-9 7.8V17.5L12 22l9-4.5V9.8L12 14 3 9.8zm2 2.9 7 3.5 7-3.5v3.5l-7 3.5-7-3.5v-3.5z"/>
+                            </svg>
+                            Dataset
+                        </a>
+                    </div>
+                </div>
+        </section>
+
+        <!-- Paper Layout with Sidebar and Content -->
+        <div class="paper-layout">
+            <!-- Sidebar Navigation -->
+            <aside class="paper-sidebar" id="paper-sidebar">
+                <div class="sidebar-header">
+                    <h3>Contents</h3>
+                    <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>
+                    </button>
+                </div>
+                <nav class="sidebar-nav">
+                    <ul class="nav-list">
+                        <li><a href="#overview" class="nav-item active">OVERVIEW</a></li>
+                        <li>
+                            <a href="#task-construction" class="nav-item">CONSTORY-BENCH: TASK AND CONSTRUCTION</a>
+                            <ul class="nav-sublist">
+                                <li><a href="#dataset-construction" class="nav-subitem">Dataset Construction</a></li>
+                                <li><a href="#error-taxonomy" class="nav-subitem">Consistency Error Taxonomy</a></li>
+                                <li><a href="#detection-pipeline" class="nav-subitem">Automated Error Detection Pipeline</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#evaluation" class="nav-item">EVALUATION</a>
+                            <ul class="nav-sublist">
+                                <li><a href="#rq1" class="nav-subitem">RQ1</a></li>
+                                <li><a href="#rq2" class="nav-subitem">RQ2</a></li>
+                                <li><a href="#rq3" class="nav-subitem">RQ3</a></li>
+                                <li><a href="#rq4" class="nav-subitem">RQ4</a></li>
+                                <li><a href="#rq5" class="nav-subitem">RQ5</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#conclusion" class="nav-item">CONCLUSION</a></li>
+                        <li><a href="#citation" class="nav-item">CITATION</a></li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Content v4.1 -->
+            <main class="paper-content">
+
+                <!-- Overview Section -->
+                <section id="overview" class="paper-section">
+                    <h2 class="section-heading">1. Overview</h2>
+                    <div class="section-content">
+                        <p>ConStory-Bench focuses on consistency in ultra-long narrative generation. It contains 2,000 prompts across four task scenarios, with outputs targeting 8,000-10,000 words.</p>
+                        
+                        <p>We pair the benchmark with <strong>ConStory-Checker</strong>, a three-stage evidence-grounded evaluator over five error categories and 19 subtypes, and report standardized CED/GRR metrics.</p>
+                        
+                        <div class="figure-container figure-small">
+                            <img src="assets/images/paper_image/ConStory-Bench_3.png" alt="Overview of ConStory-Bench" class="paper-figure">
+                            <p class="figure-caption"><strong>Figure 1: Overview of ConStory-Bench.</strong> (a) 2,000 prompts for long-story generation, (b) ConStory-Checker contradiction extraction and evidence chaining, (c) CED/GRR-based evaluation.</p>
+                        </div>
+                        
+                        <h3 class="subsection-heading">Research Questions</h3>
+                        <p>We structure our investigation around the following research questions:</p>
+                        <ol class="research-questions">
+                            <li><strong><em>To what extent do current LLMs maintain narrative coherence in ultra-long text generation, and do different models exhibit similar distributions of consistency error types?</em></strong></li>
+                            <li><strong><em>How do consistency errors scale as a function of output length across different LLM architectures?</em></strong></li>
+                            <li><strong><em>What underlying factors contribute to the emergence of consistency errors, and are there identifiable signals that reliably predict their occurrence?</em></strong></li>
+                            <li><strong><em>Do different types of consistency errors systematically co-occur, or do they arise independently?</em></strong></li>
+                            <li><strong><em>How are consistency errors distributed across positions within long-form generated narratives?</em></strong></li>
+                        </ol>
+                        
+                        <h3 class="subsection-heading">Main Contributions</h3>
+                        <ul class="contributions-list">
+                            <li>
+                                We introduce <strong>ConStory-Bench</strong>, a benchmark for evaluating narrative consistency in long-form story generation, with four task scenarios and a taxonomy of five error categories and 19 fine-grained subtypes.
+                            </li>
+                            <li>
+                                We develop <strong>ConStory-Checker</strong>, an automated evaluation pipeline that detects contradictions and supports each judgment with exact textual evidence.
+                            </li>
+                            <li>
+                                We present evaluation results across proprietary and open-source models, capability-enhanced models, and agent-enhanced systems, with systematic analysis guided by five research questions.
+                            </li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Task and Construction Section -->
+                <section id="task-construction" class="paper-section">
+                    <h2 class="section-heading">2. ConStory-Bench: Task and Construction</h2>
+                    <div class="section-content">
+                        <p>ConStory-Bench is designed to systematically detect and quantify <em>consistency</em> in long-form narrative generation. Unlike existing benchmarks that focus on fluency or style, we specifically target consistency errors that emerge over extended contexts.</p>
+                    </div>
+
+                    <!-- Dataset Construction Subsection -->
+                    <section id="dataset-construction" class="paper-subsection">
+                        <h3 class="subsection-heading">2.1 Dataset Construction</h3>
+                        <div class="subsection-content">
+                            <h4>Sources and Selection</h4>
+                            <p>We curate long-context narrative material from seven diverse public corpora: LongBench, LongBench_Write, LongLamp, TellMeAStory, WritingBench, WritingPrompts, and WikiPlots. We select passages with clear plot progression, multiple interacting entities, and explicit temporal movement—characteristics that naturally induce consistency challenges.</p>
+                            
+                            <h4>Prompt Construction</h4>
+                            <p>To create realistic generation scenarios, we convert story segments into prompts through context-aware rewriting. We identify natural breakpoints (turning points, unresolved subplots, elaboration opportunities) and generate prompts for four task scenarios:</p>
+                            <ul>
+                                <li><strong>Generation:</strong> Complete story instantiation from scratch</li>
+                                <li><strong>Continuation:</strong> Context-preserving narrative extension</li>
+                                <li><strong>Expansion:</strong> Focused segment elaboration</li>
+                                <li><strong>Completion:</strong> Coherent gap-filling</li>
+                            </ul>
+                            
+                            <p>This process yields 2,000 prompts distributed across the four task types, each targeting distinct consistency challenges.</p>
+                            
+                            <table class="data-table compact-table">
+                                <thead>
+                                    <tr>
+                                        <th>Task Type</th>
+                                        <th>Count</th>
+                                        <th>Percentage</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Generation</td>
+                                        <td>748</td>
+                                        <td>37.4%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Continuation</td>
+                                        <td>429</td>
+                                        <td>21.5%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Expansion</td>
+                                        <td>419</td>
+                                        <td>21.0%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Completion</td>
+                                        <td>394</td>
+                                        <td>19.7%</td>
+                                    </tr>
+                                    <tr class="total-row">
+                                        <td><strong>Total</strong></td>
+                                        <td><strong>2,000</strong></td>
+                                        <td><strong>100%</strong></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <!-- Consistency Error Taxonomy Subsection -->
+                    <section id="error-taxonomy" class="paper-subsection">
+                        <h3 class="subsection-heading">2.2 Consistency Error Taxonomy</h3>
+                        <div class="subsection-content">
+                            <p>We develop a hierarchical taxonomy grounded in narrative theory, comprising <strong>five top-level categories</strong> and <strong>19 fine-grained error types</strong>:</p>
+
+                            <div class="taxonomy-layout">
+                                <figure class="taxonomy-figure-panel">
+                                    <img src="assets/images/paper_image/Consistency_Error_Examples.png" alt="Consistency Error Examples" class="paper-figure taxonomy-example-figure">
+                                    <p class="figure-caption"><strong>Figure 2: Representative consistency error examples.</strong> Highlighted segments show contradictions across five categories detected by ConStory-Checker.</p>
+                                </figure>
+
+                                <div class="taxonomy-table-panel">
+                                    <div class="taxonomy-table-wrap">
+                                        <table class="taxonomy-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Error Type</th>
+                                                    <th>Sub Error Type</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr class="tax-row tax-blue">
+                                                    <td rowspan="6" class="tax-type">Timeline &amp; Plot Logic</td>
+                                                    <td>Absolute Time Contradictions</td>
+                                                </tr>
+                                                <tr class="tax-row tax-blue"><td>Duration Contradictions</td></tr>
+                                                <tr class="tax-row tax-blue"><td>Simultaneity Contradictions</td></tr>
+                                                <tr class="tax-row tax-blue"><td>Causeless Effects</td></tr>
+                                                <tr class="tax-row tax-blue"><td>Causal Logic Violations</td></tr>
+                                                <tr class="tax-row tax-blue"><td>Abandoned Plot Elements</td></tr>
+
+                                                <tr class="tax-row tax-green">
+                                                    <td rowspan="4" class="tax-type">Characterization</td>
+                                                    <td>Memory Contradictions</td>
+                                                </tr>
+                                                <tr class="tax-row tax-green"><td>Knowledge Contradictions</td></tr>
+                                                <tr class="tax-row tax-green"><td>Skill Fluctuations</td></tr>
+                                                <tr class="tax-row tax-green"><td>Forgotten Abilities</td></tr>
+
+                                                <tr class="tax-row tax-yellow">
+                                                    <td rowspan="3" class="tax-type">World-building &amp; Setting</td>
+                                                    <td>Core Rules Violations</td>
+                                                </tr>
+                                                <tr class="tax-row tax-yellow"><td>Social Norms Violations</td></tr>
+                                                <tr class="tax-row tax-yellow"><td>Geographical Contradictions</td></tr>
+
+                                                <tr class="tax-row tax-orange">
+                                                    <td rowspan="3" class="tax-type">Factual &amp; Detail Consistency</td>
+                                                    <td>Appearance Mismatches</td>
+                                                </tr>
+                                                <tr class="tax-row tax-orange"><td>Nomenclature Confusions</td></tr>
+                                                <tr class="tax-row tax-orange"><td>Quantitative Mismatches</td></tr>
+
+                                                <tr class="tax-row tax-purple">
+                                                    <td rowspan="3" class="tax-type">Narrative &amp; Style</td>
+                                                    <td>Perspective Confusions</td>
+                                                </tr>
+                                                <tr class="tax-row tax-purple"><td>Tone Inconsistencies</td></tr>
+                                                <tr class="tax-row tax-purple"><td>Style Shifts</td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <p class="table-note taxonomy-note"><strong>Table 2:</strong> Consistency-error taxonomy used by ConStory-Bench, comprising five categories and 19 subtypes.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Automated Error Detection Pipeline Subsection -->
+                    <section id="detection-pipeline" class="paper-subsection">
+                        <h3 class="subsection-heading">2.3 Automated Error Detection Pipeline</h3>
+                        <div class="subsection-content">
+                            <p>We introduce <strong>ConStory-Checker</strong>, an automated LLM-as-a-judge pipeline for scalable and auditable consistency evaluation. The framework advances from broad candidate mining to fine-grained error labeling through four stages:</p>
+                            
+                            <div class="pipeline-stages">
+                                <div class="pipeline-stage">
+                                    <div class="stage-number">1</div>
+                                    <div class="stage-content">
+                                        <h4>Category-Guided Extraction</h4>
+                                        <p>Narratives are scanned using category-specific prompts across five dimensions to extract spans likely to contain contradictions.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="pipeline-stage">
+                                    <div class="stage-number">2</div>
+                                    <div class="stage-content">
+                                        <h4>Contradiction Pairing</h4>
+                                        <p>Extracted spans are compared pairwise and classified as Consistent or Contradictory, reducing false positives.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="pipeline-stage">
+                                    <div class="stage-number">3</div>
+                                    <div class="stage-content">
+                                        <h4>Evidence Chains</h4>
+                                        <p>Each contradiction is documented with structured chains: Reasoning, Evidence (quoted text with offsets), and Conclusion (typed error).</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="pipeline-stage">
+                                    <div class="stage-number">4</div>
+                                    <div class="stage-content">
+                                        <h4>JSON Reports</h4>
+                                        <p>Standardized JSON outputs capture quotations, positions, pairings, error categories, and explanations for reproducible analysis.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <p>We adopt <code>o4-mini</code> as the evaluation model to balance accuracy and efficiency. All judgments are anchored to precise spans with character-level offsets.</p>
+                        </div>
+                    </section>
+                </section>
+
+                <!-- Evaluation Section -->
+                <section id="evaluation" class="paper-section">
+                    <h2 class="section-heading">3. Evaluation</h2>
+                    <div class="section-content">
+                        <p>We evaluate proprietary, open-source, capability-enhanced, and agent-enhanced systems on all 2,000 prompts, and report five RQ-focused findings.</p>
+                        
+                        <h3 class="subsection-heading">3.1 Experimental Setup</h3>
+                        <p>Primary metrics are <strong>CED</strong> (errors per 10K words) and <strong>GRR</strong> (group-wise rank controlling prompt difficulty). Lower is better for both.</p>
+                    </div>
+
+                    <!-- RQ1 Subsection -->
+                    <section id="rq1" class="paper-subsection">
+                        <h3 class="subsection-heading">3.2.1 <span class="rq-color-1">RQ1</span>: Model Consistency Benchmarks</h3>
+                        
+                        <div class="subsection-content">
+                            <p><strong><em>Question: To what extent do current LLMs maintain narrative coherence in ultra-long text generation, and do different models exhibit similar distributions of consistency error types?</em></strong></p>
+                            
+                            <p>CED captures absolute error density; GRR adds prompt-level relative ranking for fairer cross-model comparison.</p>
+                            
+                            <p>Metrics:</p>
+                            
+                            <ul>
+                                <li><strong>Consistency Error Density (CED):</strong> Measures errors per 10,000 words. Lower is better.</li>
+                                <li><strong>Group Relative Rank (GRR):</strong> Controls for instance difficulty through group-wise ranking. Lower is better.</li>
+                            </ul>
+                            
+                            <p class="table-note"><strong>Definition:</strong> CED normalizes error count by length; GRR ranks models within each prompt group using a length-aware quality score.</p>
+
+                            <h4>Full CED Results (All Evaluated Models)</h4>
+                            <div class="table-container rq1-ced-table-container">
+                                <table class="performance-table" id="rq1-ced-table">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2">Model</th>
+                                            <th colspan="6">CED (errors per 10K words) &#8595;</th>
+                                            <th rowspan="2">GRR &#8595;</th>
+                                            <th rowspan="2">Words</th>
+                                            <th rowspan="2">Errors</th>
+                                            <th rowspan="2">Total Stories</th>
+                                        </tr>
+                                        <tr>
+                                            <th>Overall</th>
+                                            <th>Char.</th>
+                                            <th>Fact.</th>
+                                            <th>Narr.</th>
+                                            <th>Time.</th>
+                                            <th>World</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="rq1-ced-body"></tbody>
+                                </table>
+                            </div>
+                            <p class="table-note"><strong>Table:</strong> Comprehensive model performance aligned with the latest paper table (lower is better for CED/GRR).</p>
+                            
+                            <h4>Leaderboard Snapshot</h4>
+                            <div class="figures-row">
+                                <div class="figure-container-half">
+                                    <img src="assets/images/paper_image/leaderboard.png" alt="Model Performance Leaderboard" class="paper-figure paper-figure-compact">
+                                    <p class="figure-caption"><strong>Figure 3: GRR leaderboard by model family.</strong> Lower GRR indicates stronger consistency under fair relative ranking.</p>
+                                </div>
+                                <div class="figure-container-half">
+                                    <img src="assets/images/paper_image/Scatter_plot.png" alt="CED vs Average Output Length" class="paper-figure paper-figure-compact">
+                                    <p class="figure-caption"><strong>Figure 4: CED versus average output length.</strong> Lower-left is ideal: fewer consistency errors with shorter-to-moderate outputs.</p>
+                                </div>
+                            </div>
+                            <p class="table-note"><strong>Note:</strong> The Leaderboard tab keeps the same numbers with interactive sorting, filtering, and GRR view.</p>
+                        </div>
+                        
+                        <!-- Finding 1 Card -->
+                        <div class="finding-card">
+                            <div class="finding-content">
+                                <span class="finding-title">Finding 1.</span>
+                                <span class="finding-text"><span class="highlight-blue">GPT-5-Reasoning</span> remains the strongest model (CED 0.113), while most models still struggle with long-form consistency and show substantially higher errors under open-ended generation tasks.</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- RQ2 Subsection -->
+                    <section id="rq2" class="paper-subsection">
+                        <h3 class="subsection-heading">3.2.2 <span class="rq-color-2">RQ2</span>: Output Length Dynamics</h3>
+                        
+                        <div class="subsection-content">
+                            <p><strong><em>Question: How do consistency errors scale as a function of output length across different LLM architectures?</em></strong></p>
+                            
+                            <p>Length preferences differ sharply (e.g., GPT-5-Reasoning and Claude-Sonnet-4.5 are mostly 6K+, while GPT-4o-1120 is concentrated in 0-3K), and error counts increase near-linearly with longer outputs.</p>
+                            
+                            <div class="figures-row">
+                                <div class="figure-container-half">
+                                    <img src="assets/images/paper_image/Length_Distribution.png" alt="Length Distribution" class="paper-figure">
+                                    <p class="figure-caption"><strong>Figure 5: Output length distribution.</strong> Stacked bars show the proportion of 0-3K, 3K-6K, and 6K+ word outputs across representative models.</p>
+                                </div>
+                                
+                                <div class="figure-container-half">
+                                    <img src="assets/images/paper_image/Consistency_Error_Growth_Length_2.png" alt="Error Growth" class="paper-figure">
+                                    <p class="figure-caption"><strong>Figure 6: Consistency error growth.</strong> Lines show average errors at each length; bars show sample counts.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Finding 2 Card -->
+                        <div class="finding-card">
+                            <div class="finding-content">
+                                <span class="finding-title">Finding 2.</span>
+                                <span class="finding-text">Errors grow approximately <span class="highlight-orange">linearly with length</span>, but models have very different <span class="highlight-blue">length preferences</span>, producing distinct consistency-length trade-offs.</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- RQ3 Subsection -->
+                    <section id="rq3" class="paper-subsection">
+                        <h3 class="subsection-heading">3.2.3 <span class="rq-color-3">RQ3</span>: Token Uncertainty Signals</h3>
+                        
+                        <div class="subsection-content">
+                            <p><strong><em>Question: What underlying factors contribute to the emergence of consistency errors, and are there identifiable signals that reliably predict their occurrence?</em></strong></p>
+                            
+                            <p>Error-bearing spans show higher entropy and perplexity, and lower token probability, than whole-text baselines across representative models.</p>
+
+                            <div class="table-container">
+                                <table class="uncertainty-table">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2">Model</th>
+                                            <th colspan="2">Average Values</th>
+                                            <th rowspan="2">Relative Difference<br/>(Error vs Whole)</th>
+                                        </tr>
+                                        <tr>
+                                            <th>Whole Text</th>
+                                            <th>Error Content</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="metric-header">
+                                            <td colspan="4"><strong>Entropy (bits)</strong> — Higher indicates greater uncertainty</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Qwen3-30B-A3B-Instruct-2507</td>
+                                            <td>1.1438</td>
+                                            <td>1.2814</td>
+                                            <td class="highlight-diff">+12.03%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Qwen3-4B-Instruct-2507</td>
+                                            <td>1.0734</td>
+                                            <td>1.2799</td>
+                                            <td class="highlight-diff">+19.24%</td>
+                                        </tr>
+                                        <tr class="metric-header">
+                                            <td colspan="4"><strong>Probability</strong> — Higher indicates greater confidence</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Qwen3-30B-A3B-Instruct-2507</td>
+                                            <td>0.6895</td>
+                                            <td>0.6522</td>
+                                            <td class="highlight-diff">-5.41%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Qwen3-4B-Instruct-2507</td>
+                                            <td>0.7097</td>
+                                            <td>0.6530</td>
+                                            <td class="highlight-diff">-7.99%</td>
+                                        </tr>
+                                        <tr class="metric-header">
+                                            <td colspan="4"><strong>Perplexity</strong> — Lower indicates better predictability</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Qwen3-30B-A3B-Instruct-2507</td>
+                                            <td>1.8875</td>
+                                            <td>1.9354</td>
+                                            <td class="highlight-diff">+2.54%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Qwen3-4B-Instruct-2507</td>
+                                            <td>1.8566</td>
+                                            <td>1.9596</td>
+                                            <td class="highlight-diff">+5.55%</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <p class="table-note"><strong>Table:</strong> Token-level uncertainty comparison across three metrics. Relative differences are computed as error-bearing content vs whole-text baseline.</p>
+                        </div>
+                        
+                        <!-- Finding 3 Card -->
+                        <div class="finding-card">
+                            <div class="finding-content">
+                                <span class="finding-title">Finding 3.</span>
+                                <span class="finding-text">Consistency failures concentrate in high-uncertainty regions: higher <span class="highlight-purple">entropy/perplexity</span> and lower <span class="highlight-orange">token confidence</span> provide actionable early-warning signals.</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- RQ4 Subsection -->
+                    <section id="rq4" class="paper-subsection">
+                        <h3 class="subsection-heading">3.2.4 <span class="rq-color-4">RQ4</span>: Cross-Error Correlations</h3>
+                        
+                        <div class="subsection-content">
+                            <p><strong><em>Question: Do different types of consistency errors systematically co-occur, or do they arise independently?</em></strong></p>
+                            
+                            <p>We present model-specific Pearson correlation matrices across eight representative models to show how cross-error coupling patterns differ by model family.</p>
+                            
+                            <div class="figure-container figure-wide">
+                                <img src="assets/images/paper_image/causal_relationship_max.png" alt="Model-specific Error Correlation Matrices" class="paper-figure">
+                                <p class="figure-caption"><strong>Figure 7: Model-specific error correlation matrices across eight representative models.</strong> Darker colors indicate stronger positive correlations between error categories.</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Finding 4 Card -->
+                        <div class="finding-card">
+                            <div class="finding-content">
+                                <span class="finding-title">Finding 4.</span>
+                                <span class="finding-text">Cross-category coupling is <span class="highlight-orange">model-dependent</span>: several models show strong <span class="highlight-blue">Characterization-Factual</span> and <span class="highlight-green">Factual-World</span> links, while <span class="highlight-purple">Narrative/Style</span> remains comparatively sparse in most matrices.</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- RQ5 Subsection -->
+                    <section id="rq5" class="paper-subsection">
+                        <h3 class="subsection-heading">3.2.5 <span class="rq-color-5">RQ5</span>: Positional Distribution of Errors</h3>
+                        
+                        <div class="subsection-content">
+                            <p><strong><em>Question: How are consistency errors distributed across positions within long-form generated narratives?</em></strong></p>
+                            
+                            <p>We analyze normalized fact position, contradiction position, and their distance (gap) across representative error subtypes.</p>
+                            
+                            <div class="table-container">
+                                <table class="position-table">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2">Metric</th>
+                                            <th>Absolute Time<br/>Contradictions</th>
+                                            <th>Core Rules<br/>Violations</th>
+                                            <th>Quantitative<br/>Mismatches</th>
+                                            <th>Geographical<br/>Contradictions</th>
+                                            <th>Nomenclature<br/>Confusions</th>
+                                            <th>Memory<br/>Contradictions</th>
+                                            <th>Perspective<br/>Confusions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Avg Fact</strong></td>
+                                            <td>22.6%</td>
+                                            <td>23.7%</td>
+                                            <td>23.4%</td>
+                                            <td>20.4%</td>
+                                            <td>21.6%</td>
+                                            <td>21.8%</td>
+                                            <td>13.7%</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Avg Contradiction</strong></td>
+                                            <td>48.9%</td>
+                                            <td>39.4%</td>
+                                            <td>40.6%</td>
+                                            <td>39.2%</td>
+                                            <td>34.4%</td>
+                                            <td>38.2%</td>
+                                            <td>12.2%</td>
+                                        </tr>
+                                        <tr class="highlight-gap">
+                                            <td><strong>Avg Gap</strong></td>
+                                            <td>29.7%</td>
+                                            <td>23.4%</td>
+                                            <td>23.8%</td>
+                                            <td class="gap-large"><strong>31.0%</strong></td>
+                                            <td>23.3%</td>
+                                            <td>25.4%</td>
+                                            <td class="gap-small"><strong>4.7%</strong></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <p class="table-note"><strong>Table:</strong> Positions are normalized by story length. Contradictions are concentrated mostly in the 40-60% range, with category-specific gap patterns.</p>
+                            
+                            <div class="figure-container figure-wide">
+                                <img src="assets/images/paper_image/Dumbbell_2.png" alt="Dumbbell Plot of Positional Distributions" class="paper-figure">
+                                <p class="figure-caption"><strong>Figure 8: Dumbbell positional plot.</strong> Blue points are fact positions, red points are contradiction positions, and line length is the gap, shown across representative models.</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Finding 5 Card -->
+                        <div class="finding-card">
+                            <div class="finding-content">
+                                <span class="finding-title">Finding 5.</span>
+                                <span class="finding-text">Error locations are <span class="highlight-orange">not uniform</span>: fact mentions cluster earlier (about 15-30%), contradictions appear later (about 40-60%), and long-range gaps are largest for temporal/geographical inconsistencies.</span>
+                            </div>
+                        </div>
+                    </section>
+                </section>
+
+                <!-- Conclusion Section -->
+                <section id="conclusion" class="paper-section">
+                    <h2 class="section-heading">Conclusion</h2>
+                    <div class="section-content">
+                        <p>We presented <strong>ConStory-Bench</strong>, a benchmark, and <strong>ConStory-Checker</strong>, an evaluation pipeline, for assessing narrative consistency in long-form story generation. Our experiments show that current LLMs still produce systematic consistency errors, especially in factual tracking and temporal reasoning; moreover, these errors are not random but cluster in predictable narrative regions. We will provide an interactive portal where the community can discover and submit new consistency errors and checking techniques.</p>
+                    </div>
+                </section>
+
+                <!-- Citation Section -->
+                <section id="citation" class="paper-section">
+                    <h2 class="section-heading">Citation</h2>
+                    <div class="section-content citation-box">
+                        <pre><code>@article{constorybench2025,
+  title={ConStory-Bench: A Comprehensive Benchmark for Evaluating Large Language Models on Long Story Consistency},
+  author={Authors},
+  journal={Journal},
+  year={2025}
+}</code></pre>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Leaderboard Page -->
+    <div id="page-leaderboard" class="page-content">
+        <section class="section leaderboard">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <img src="assets/images/logo2.png?v=2" alt="ConStory-Bench Logo" class="leaderboard-logo">
+                        Leaderboard
+                    </h2>
+                    <p class="section-description" style="font-family: 'Lora', serif; font-size: 1.5rem; margin-top: 1rem; font-weight: 700; color: #1a1a1a;">
+                        <strong>CED</strong> (Consistency Error Density)
+                    </p>
+                    <p class="section-description" style="margin-top: 0.5rem; font-size: 0.95rem;">
+                        CED measures the number of consistency errors per 10,000 words. Lower values indicate better performance.
+                    </p>
+                </div>
+                
+                <div class="leaderboard-controls">
+                    <div class="filter-group">
+                        <button class="filter-btn active" data-type="all">All</button>
+                        <button class="filter-btn" data-type="proprietary">Proprietary Models</button>
+                        <button class="filter-btn" data-type="open-source">Open-source Models</button>
+                        <button class="filter-btn" data-type="capability-enhanced">Capability-enhanced LLMs</button>
+                        <button class="filter-btn" data-type="agent-enhanced">Agent-enhanced Systems</button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="leaderboard-table" id="leaderboard-table">
+                        <thead>
+                            <tr>
+                                <th class="rank-col">Rank</th>
+                                <th class="model-col">Model</th>
+                                <th class="org-col">Organization</th>
+                                <th class="score-col sortable" data-sort="generation">Generation CED</th>
+                                <th class="score-col sortable" data-sort="continuation">Continuation CED</th>
+                                <th class="score-col sortable" data-sort="expansion">Expansion CED</th>
+                                <th class="score-col sortable" data-sort="completion">Completion CED</th>
+                                <th class="length-col sortable" data-sort="avg_words">Avg Words</th>
+                                <th class="length-col sortable" data-sort="total">Total Stories</th>
+                                <th class="overall-col sortable" data-sort="overall">CED Overall</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboard-body">
+                            <!-- Data will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="leaderboard-note">
+                    <p><strong>Metric:</strong> CED (Consistency Error Density) - measures errors per 10,000 words. <strong>Lower values are better.</strong></p>
+                    <p><strong>Note:</strong> CED table reports task-level density for generation, continuation, expansion, and completion. Last updated: March 5, 2026.</p>
+                </div>
+
+                <!-- Divider -->
+                <hr style="margin: 3rem 0; border: none; border-top: 2px solid #e0e0e0;">
+
+                <!-- GRR Section -->
+                <div class="section-header" style="margin-top: 2rem;">
+                    <p class="section-description" style="font-family: 'Lora', serif; font-size: 1.5rem; margin-top: 1rem; font-weight: 700; color: #1a1a1a;">
+                        <strong>GRR</strong> (Group Relative Rank)
+                    </p>
+                    <p class="section-description" style="margin-top: 0.5rem; font-size: 0.95rem;">
+                        GRR measures the average ranking across all story groups. Lower values indicate better performance.
+                    </p>
+                </div>
+
+                <div class="leaderboard-controls" style="margin-top: 1.5rem;">
+                    <div class="filter-group">
+                        <button class="filter-btn filter-btn-grr active" data-type="all">All</button>
+                        <button class="filter-btn filter-btn-grr" data-type="proprietary">Proprietary Models</button>
+                        <button class="filter-btn filter-btn-grr" data-type="open-source">Open-source Models</button>
+                        <button class="filter-btn filter-btn-grr" data-type="capability-enhanced">Capability-enhanced LLMs</button>
+                        <button class="filter-btn filter-btn-grr" data-type="agent-enhanced">Agent-enhanced Systems</button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="leaderboard-table" id="leaderboard-table-grr">
+                        <thead>
+                            <tr>
+                                <th class="rank-col">Rank</th>
+                                <th class="model-col">Model</th>
+                                <th class="org-col">Organization</th>
+                                <th class="score-col sortable-grr" data-sort="generation">Generation GRR</th>
+                                <th class="score-col sortable-grr" data-sort="continuation">Continuation GRR</th>
+                                <th class="score-col sortable-grr" data-sort="expansion">Expansion GRR</th>
+                                <th class="score-col sortable-grr" data-sort="completion">Completion GRR</th>
+                                <th class="length-col sortable-grr" data-sort="avg_words">Avg Words</th>
+                                <th class="length-col sortable-grr" data-sort="total">Total Stories</th>
+                                <th class="overall-col sortable-grr" data-sort="overall">GRR Overall</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboard-body-grr">
+                            <!-- Data will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="leaderboard-note">
+                    <p><strong>Metric:</strong> GRR (Group Relative Rank) - average ranking position across story groups. <strong>Lower values are better.</strong></p>
+                    <p><strong>Note:</strong> GRR table uses task-type grouped relative ranking; lower values are better. Last updated: March 5, 2026.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Submit Page -->
+    <div id="page-submit" class="page-content">
+        <section class="section submit">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <img src="assets/images/logo3.png" alt="Submit Icon" style="width: 96px; height: 96px; vertical-align: middle; margin-right: 16px; object-fit: contain;">
+                        Submit Your Results
+                    </h2>
+                    <p class="section-description">
+                        Evaluate your model on ConStory-Bench and submit results to the leaderboard
+                    </p>
+                </div>
+                <div class="submit-content">
+                    <div class="submit-card">
+                        <h3>Submission Guidelines</h3>
+                        <ol>
+                            <li>Download the benchmark dataset from our GitHub repository</li>
+                            <li>Run the evaluation scripts with your model</li>
+                            <li>Generate the results in the required JSON format</li>
+                            <li>Submit a pull request to our GitHub repository with your results</li>
+                            <li>Include model details, parameters, and any specific configurations used</li>
+                        </ol>
+                        <a href="https://github.com/Picrew/ConStory-Bench" class="btn btn-primary" target="_blank">View Submission Guide →</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Paper Page -->
+    <div id="page-paper" class="page-content">
+        <section class="section paper">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <img src="assets/images/logo4.png" alt="Paper Icon" style="width: 96px; height: 96px; vertical-align: middle; margin-right: 16px; object-fit: contain;">
+                        Paper & Resources
+                    </h2>
+                    <p class="section-description">
+                        Research paper and additional resources (Coming Soon)
+                    </p>
+                </div>
+                <div class="paper-content">
+                    <div class="paper-placeholder">
+                        <p>📄 Research paper will be available soon</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2025 ConStory-Bench. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js?v=20260305d"></script>
+</body>
+</html>
