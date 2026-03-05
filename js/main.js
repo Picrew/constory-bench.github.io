@@ -106,6 +106,23 @@ const rq1ComprehensiveData = [
     {group: "Agent-enhanced Systems", model: "DOME", overall: 1.033, char: 0.037, fact: 0.591, narr: 0.018, time: 0.288, world: 0.068, grr: 6.94, words: 8399, errors: 0.84, total: 1969}
 ];
 
+const PAGE_TO_ROUTE_SEGMENT = {
+    overview: '',
+    leaderboard: 'leadboard',
+    submit: 'submit',
+    paper: 'paper'
+};
+
+const ROUTE_SEGMENT_TO_PAGE = {
+    leadboard: 'leaderboard',
+    leaderboard: 'leaderboard',
+    submit: 'submit',
+    paper: 'paper'
+};
+
+const KNOWN_ROUTE_SEGMENTS = new Set(Object.keys(ROUTE_SEGMENT_TO_PAGE));
+const BASE_PATH = getBasePath();
+
 // Global state
 let currentPage = 'overview';
 let currentFilter = 'all';
@@ -120,43 +137,131 @@ let sortDirectionGRR = 'asc'; // Lower is better for GRR
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
     initializeNavigation();
+    initializeRouteHandling();
     initializeLeaderboard();
     initializeRQ1CEDTable();
     initializeLeaderboardGRR();
     initializeThemeToggle();
     initializePaperNavigation();
-    showPage('overview');
+    const initialPage = getPageFromQueryParam() || getPageFromPath();
+    showPage(initialPage, { updateUrl: true, replaceState: true, scrollToTop: false });
 });
 
 // ============================================
 // Page Navigation
 // ============================================
-function showPage(pageName) {
+function normalizePath(pathname) {
+    const withSlash = pathname || '/';
+    const withoutIndex = withSlash.replace(/\/index\.html$/i, '/');
+    return withoutIndex.endsWith('/') ? withoutIndex : `${withoutIndex}/`;
+}
+
+function getBasePath(pathname = window.location.pathname) {
+    const normalized = normalizePath(pathname);
+    const segments = normalized.split('/').filter(Boolean);
+
+    if (segments.length === 0) {
+        return '';
+    }
+
+    const lastSegment = segments[segments.length - 1].toLowerCase();
+    if (KNOWN_ROUTE_SEGMENTS.has(lastSegment)) {
+        segments.pop();
+    }
+
+    return segments.length > 0 ? `/${segments.join('/')}` : '';
+}
+
+function getPageFromPath(pathname = window.location.pathname) {
+    const normalized = normalizePath(pathname);
+    const segments = normalized.split('/').filter(Boolean);
+
+    if (segments.length === 0) {
+        return 'overview';
+    }
+
+    const lastSegment = segments[segments.length - 1].toLowerCase();
+    return ROUTE_SEGMENT_TO_PAGE[lastSegment] || 'overview';
+}
+
+function getPageFromQueryParam(search = window.location.search) {
+    const pageParam = new URLSearchParams(search).get('page');
+    if (!pageParam) {
+        return null;
+    }
+
+    const normalizedPage = pageParam.toLowerCase();
+    if (ROUTE_SEGMENT_TO_PAGE[normalizedPage]) {
+        return ROUTE_SEGMENT_TO_PAGE[normalizedPage];
+    }
+
+    return PAGE_TO_ROUTE_SEGMENT[normalizedPage] !== undefined ? normalizedPage : null;
+}
+
+function getPageUrl(pageName) {
+    const safePage = PAGE_TO_ROUTE_SEGMENT[pageName] !== undefined ? pageName : 'overview';
+    const segment = PAGE_TO_ROUTE_SEGMENT[safePage];
+    const cleanBase = BASE_PATH.replace(/\/+$/, '');
+
+    if (!segment) {
+        return cleanBase ? `${cleanBase}/` : '/';
+    }
+
+    return cleanBase ? `${cleanBase}/${segment}/` : `/${segment}/`;
+}
+
+function updatePageUrl(pageName, { replaceState = false } = {}) {
+    const targetUrl = getPageUrl(pageName);
+    const currentPath = normalizePath(window.location.pathname);
+    const targetPath = normalizePath(targetUrl);
+
+    if (currentPath === targetPath && window.location.search === '' && window.location.hash === '') {
+        return;
+    }
+
+    const method = replaceState ? 'replaceState' : 'pushState';
+    window.history[method]({ page: pageName }, '', targetUrl);
+}
+
+function showPage(pageName, options = {}) {
+    const { updateUrl = true, replaceState = false, scrollToTop = true } = options;
+    const safePage = PAGE_TO_ROUTE_SEGMENT[pageName] !== undefined ? pageName : 'overview';
+
     // Hide all pages
     document.querySelectorAll('.page-content').forEach(page => {
         page.classList.remove('active');
     });
     
     // Show selected page
-    const pageElement = document.getElementById(`page-${pageName}`);
+    const pageElement = document.getElementById(`page-${safePage}`);
     if (pageElement) {
         pageElement.classList.add('active');
-        currentPage = pageName;
+        currentPage = safePage;
     }
     
     // Update nav active state
     document.querySelectorAll('.nav-link').forEach(link => {
         link.classList.remove('active');
-        if (link.dataset.page === pageName) {
+        if (link.dataset.page === safePage) {
             link.classList.add('active');
         }
     });
+
+    if (updateUrl) {
+        updatePageUrl(safePage, { replaceState });
+    }
     
     // Scroll to top
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (scrollToTop) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 }
 
 function initializeNavigation() {
+    document.querySelectorAll('.nav-link[data-page]').forEach(link => {
+        link.href = getPageUrl(link.dataset.page);
+    });
+
     // Handle nav link clicks
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', (e) => {
@@ -166,6 +271,13 @@ function initializeNavigation() {
                 showPage(page);
             }
         });
+    });
+}
+
+function initializeRouteHandling() {
+    window.addEventListener('popstate', () => {
+        const targetPage = getPageFromQueryParam() || getPageFromPath();
+        showPage(targetPage, { updateUrl: false, scrollToTop: false });
     });
 }
 
@@ -731,6 +843,7 @@ function updateActiveNavItem(activeItem) {
 // Export for external use
 window.ConStoryBench = {
     showPage,
+    getPageUrl,
     renderLeaderboard,
     renderLeaderboardGRR,
     leaderboardData,
