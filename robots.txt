@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://picrew.github.io/constory-bench.github.io/sitemap.xml
